@@ -7,7 +7,7 @@ Convolutional neural network implementation using NumPy. Just three layers are c
 5.	Max Pooling layer: Applying the pooling operation on the output of ReLU layer.
 6.	Stacking conv, ReLU, and max pooling layers
 
-
+```python
 # Reading the image
 #img = skimage.io.imread("fruits2.png")
 img = skimage.data.chelsea()
@@ -51,7 +51,7 @@ l3_feature_map_relu = relu(l3_feature_map)
 print("\n**Pooling**")
 l3_feature_map_relu_pool = pooling(l3_feature_map_relu, 2, 2)
 print("**End of conv layer 3**\n")
-
+```
 
 
 ![l1](https://user-images.githubusercontent.com/16560492/39051349-ac56ac56-44a8-11e8-8695-29901dd3a811.png)
