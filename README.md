@@ -31,7 +31,12 @@ l1_feature_map_relu = relu(l1_feature_map)
 print("\n**Pooling**")
 l1_feature_map_relu_pool = pooling(l1_feature_map_relu, 2, 2)
 print("**End of conv layer 1**\n")
+```
 
+Here is the outputs of such conv-relu-pool layers.
+![l1](https://user-images.githubusercontent.com/16560492/39051349-ac56ac56-44a8-11e8-8695-29901dd3a811.png)
+
+```python
 # Second conv layer
 l2_filter = numpy.random.rand(3, 5, 5, l1_feature_map_relu_pool.shape[-1])
 print("\n**Working with conv layer 2**")
@@ -41,7 +46,11 @@ l2_feature_map_relu = relu(l2_feature_map)
 print("\n**Pooling**")
 l2_feature_map_relu_pool = pooling(l2_feature_map_relu, 2, 2)
 print("**End of conv layer 2**\n")
+```
+The outputs of such conv-relu-pool layers are shown below.
+![l2](https://user-images.githubusercontent.com/16560492/39051582-6abe0996-44a9-11e8-88e1-589a673a8b11.png)
 
+```python
 # Third conv layer
 l3_filter = numpy.random.rand(1, 7, 7, l2_feature_map_relu_pool.shape[-1])
 print("\n**Working with conv layer 3**")
@@ -52,10 +61,12 @@ print("\n**Pooling**")
 l3_feature_map_relu_pool = pooling(l3_feature_map_relu, 2, 2)
 print("**End of conv layer 3**\n")
 ```
+The following graph shows the outputs of the above conv-relu-pool layers.
+![l3](https://user-images.githubusercontent.com/16560492/39051603-76339f3e-44a9-11e8-8e4e-9303a51aaa79.png)
 
-
-![l1](https://user-images.githubusercontent.com/16560492/39051349-ac56ac56-44a8-11e8-8695-29901dd3a811.png)
-
-
-
-
+For more info.:
+KDnuggets: https://www.kdnuggets.com/author/ahmed-gad
+LinkedIn: https://www.linkedin.com/in/ahmedfgad
+Facebook: https://www.facebook.com/ahmed.f.gadd
+ahmed.f.gad@gmail.com
+ahmed.fawzy@ci.menofia.edu.eg
