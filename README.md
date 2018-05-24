@@ -31,7 +31,7 @@ The filters of the first conv layer are prepared according to the input image di
 1) Number of filters.
 2) Size of first dimension.
 3) Size of second dimension.
-3) Size of third dimension and so on.
+4) Size of third dimension and so on.
 
 Because the previous image is just gray, then the filter will have just width and height and no depth. That is why it is created by specifying just three numbers (number of filters, width, and height). Here is an example of creating two 3x3 filters.
 ```python
