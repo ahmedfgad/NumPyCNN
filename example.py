@@ -1,7 +1,7 @@
 import skimage.data
 import numpy
 import matplotlib
-import NumPyCNN
+import numpycnn
 
 """
 Convolutional neural network implementation using NumPy.
@@ -41,31 +41,31 @@ l1_filter[1, :, :] = numpy.array([[[1,   1,  1],
                                    [-1, -1, -1]]])
 
 print("\n**Working with conv layer 1**")
-l1_feature_map = NumPyCNN.conv(img, l1_filter)
+l1_feature_map = numpycnn.conv(img, l1_filter)
 print("\n**ReLU**")
-l1_feature_map_relu = NumPyCNN.relu(l1_feature_map)
+l1_feature_map_relu = numpycnn.relu(l1_feature_map)
 print("\n**Pooling**")
-l1_feature_map_relu_pool = NumPyCNN.pooling(l1_feature_map_relu, 2, 2)
+l1_feature_map_relu_pool = numpycnn.pooling(l1_feature_map_relu, 2, 2)
 print("**End of conv layer 1**\n")
 
 # Second conv layer
 l2_filter = numpy.random.rand(3, 5, 5, l1_feature_map_relu_pool.shape[-1])
 print("\n**Working with conv layer 2**")
-l2_feature_map = NumPyCNN.conv(l1_feature_map_relu_pool, l2_filter)
+l2_feature_map = numpycnn.conv(l1_feature_map_relu_pool, l2_filter)
 print("\n**ReLU**")
-l2_feature_map_relu = NumPyCNN.relu(l2_feature_map)
+l2_feature_map_relu = numpycnn.relu(l2_feature_map)
 print("\n**Pooling**")
-l2_feature_map_relu_pool = NumPyCNN.pooling(l2_feature_map_relu, 2, 2)
+l2_feature_map_relu_pool = numpycnn.pooling(l2_feature_map_relu, 2, 2)
 print("**End of conv layer 2**\n")
 
 # Third conv layer
 l3_filter = numpy.random.rand(1, 7, 7, l2_feature_map_relu_pool.shape[-1])
 print("\n**Working with conv layer 3**")
-l3_feature_map = NumPyCNN.conv(l2_feature_map_relu_pool, l3_filter)
+l3_feature_map = numpycnn.conv(l2_feature_map_relu_pool, l3_filter)
 print("\n**ReLU**")
-l3_feature_map_relu = NumPyCNN.relu(l3_feature_map)
+l3_feature_map_relu = numpycnn.relu(l3_feature_map)
 print("\n**Pooling**")
-l3_feature_map_relu_pool = NumPyCNN.pooling(l3_feature_map_relu, 2, 2)
+l3_feature_map_relu_pool = numpycnn.pooling(l3_feature_map_relu, 2, 2)
 print("**End of conv layer 3**\n")
 
 # Graphing results
