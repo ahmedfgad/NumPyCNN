@@ -1,17 +1,21 @@
-import skimage.data
 import numpy
-import matplotlib
 import sys
 
 def conv_(img, conv_filter):
-    filter_size = conv_filter.shape[0]
+    filter_size = conv_filter.shape[1]
     result = numpy.zeros((img.shape))
     #Looping through the image to apply the convolution operation.
     for r in numpy.uint16(numpy.arange(filter_size/2, 
-                          img.shape[0]-filter_size/2-2)):
-        for c in numpy.uint16(numpy.arange(filter_size/2, img.shape[1]-filter_size/2-2)):
-            #Getting the current region to get multiplied with the filter.
-            curr_region = img[r:r+filter_size, c:c+filter_size]
+                          img.shape[0]-filter_size/2)):
+        for c in numpy.uint16(numpy.arange(filter_size/2, 
+                                           img.shape[1]-filter_size/2)):
+            """
+            Getting the current region to get multiplied with the filter.
+            How to loop through the image and get the region based on 
+            the image and filer sizes is the most tricky part of convolution.
+            """
+            curr_region = img[r-numpy.uint16(numpy.floor(filter_size/2)):r+numpy.uint16(numpy.ceil(filter_size/2)), 
+                              c-numpy.uint16(numpy.floor(filter_size/2)):c+numpy.uint16(numpy.ceil(filter_size/2))]
             #Element-wise multipliplication between the current region and the filter.
             curr_result = curr_region * conv_filter
             conv_sum = numpy.sum(curr_result) #Summing the result of multiplication.
@@ -81,161 +85,3 @@ def relu(feature_map):
             for c in numpy.arange(0, feature_map.shape[1]):
                 relu_out[r, c, map_num] = numpy.max(feature_map[r, c, map_num], 0)
     return relu_out
-    
-# Reading the image
-#img = skimage.io.imread("fruits2.png")
-img = skimage.data.chelsea()
-# Converting the image into gray.
-img = skimage.color.rgb2gray(img)
-
-# First conv layer
-#l1_filter = numpy.random.rand(2,7,7)*20 # Preparing the filters randomly.
-l1_filter = numpy.zeros((2,3,3))
-l1_filter[0, :, :] = numpy.array([[[-1, 0, 1], 
-                                   [-1, 0, 1], 
-                                   [-1, 0, 1]]])
-l1_filter[1, :, :] = numpy.array([[[1,   1,  1], 
-                                   [0,   0,  0], 
-                                   [-1, -1, -1]]])
-
-print("\n**Working with conv layer 1**")
-l1_feature_map = conv(img, l1_filter)
-print("\n**ReLU**")
-l1_feature_map_relu = relu(l1_feature_map)
-print("\n**Pooling**")
-l1_feature_map_relu_pool = pooling(l1_feature_map_relu, 2, 2)
-print("**End of conv layer 1**\n")
-
-# Second conv layer
-l2_filter = numpy.random.rand(3, 5, 5, l1_feature_map_relu_pool.shape[-1])
-print("\n**Working with conv layer 2**")
-l2_feature_map = conv(l1_feature_map_relu_pool, l2_filter)
-print("\n**ReLU**")
-l2_feature_map_relu = relu(l2_feature_map)
-print("\n**Pooling**")
-l2_feature_map_relu_pool = pooling(l2_feature_map_relu, 2, 2)
-print("**End of conv layer 2**\n")
-
-# Third conv layer
-l3_filter = numpy.random.rand(1, 7, 7, l2_feature_map_relu_pool.shape[-1])
-print("\n**Working with conv layer 3**")
-l3_feature_map = conv(l2_feature_map_relu_pool, l3_filter)
-print("\n**ReLU**")
-l3_feature_map_relu = relu(l3_feature_map)
-print("\n**Pooling**")
-l3_feature_map_relu_pool = pooling(l3_feature_map_relu, 2, 2)
-print("**End of conv layer 3**\n")
-
-# Graphing results
-fig0, ax0 = matplotlib.pyplot.subplots(nrows=1, ncols=1)
-ax0.imshow(img).set_cmap("gray")
-ax0.set_title("Input Image")
-ax0.get_xaxis().set_ticks([])
-ax0.get_yaxis().set_ticks([])
-matplotlib.pyplot.savefig("in_img.png", bbox_inches="tight")
-matplotlib.pyplot.close(fig0)
-
-# Layer 1
-fig1, ax1 = matplotlib.pyplot.subplots(nrows=3, ncols=2)
-ax1[0, 0].imshow(l1_feature_map[:, :, 0]).set_cmap("gray")
-ax1[0, 0].get_xaxis().set_ticks([])
-ax1[0, 0].get_yaxis().set_ticks([])
-ax1[0, 0].set_title("L1-Map1")
-
-ax1[0, 1].imshow(l1_feature_map[:, :, 1]).set_cmap("gray")
-ax1[0, 1].get_xaxis().set_ticks([])
-ax1[0, 1].get_yaxis().set_ticks([])
-ax1[0, 1].set_title("L1-Map2")
-
-ax1[1, 0].imshow(l1_feature_map_relu[:, :, 0]).set_cmap("gray")
-ax1[1, 0].get_xaxis().set_ticks([])
-ax1[1, 0].get_yaxis().set_ticks([])
-ax1[1, 0].set_title("L1-Map1ReLU")
-
-ax1[1, 1].imshow(l1_feature_map_relu[:, :, 1]).set_cmap("gray")
-ax1[1, 1].get_xaxis().set_ticks([])
-ax1[1, 1].get_yaxis().set_ticks([])
-ax1[1, 1].set_title("L1-Map2ReLU")
-
-ax1[2, 0].imshow(l1_feature_map_relu_pool[:, :, 0]).set_cmap("gray")
-ax1[2, 0].get_xaxis().set_ticks([])
-ax1[2, 0].get_yaxis().set_ticks([])
-ax1[2, 0].set_title("L1-Map1ReLUPool")
-
-ax1[2, 1].imshow(l1_feature_map_relu_pool[:, :, 1]).set_cmap("gray")
-ax1[2, 0].get_xaxis().set_ticks([])
-ax1[2, 0].get_yaxis().set_ticks([])
-ax1[2, 1].set_title("L1-Map2ReLUPool")
-
-matplotlib.pyplot.savefig("L1.png", bbox_inches="tight")
-matplotlib.pyplot.close(fig1)
-
-# Layer 2
-fig2, ax2 = matplotlib.pyplot.subplots(nrows=3, ncols=3)
-ax2[0, 0].imshow(l2_feature_map[:, :, 0]).set_cmap("gray")
-ax2[0, 0].get_xaxis().set_ticks([])
-ax2[0, 0].get_yaxis().set_ticks([])
-ax2[0, 0].set_title("L2-Map1")
-
-ax2[0, 1].imshow(l2_feature_map[:, :, 1]).set_cmap("gray")
-ax2[0, 1].get_xaxis().set_ticks([])
-ax2[0, 1].get_yaxis().set_ticks([])
-ax2[0, 1].set_title("L2-Map2")
-
-ax2[0, 2].imshow(l2_feature_map[:, :, 2]).set_cmap("gray")
-ax2[0, 2].get_xaxis().set_ticks([])
-ax2[0, 2].get_yaxis().set_ticks([])
-ax2[0, 2].set_title("L2-Map3")
-
-ax2[1, 0].imshow(l2_feature_map_relu[:, :, 0]).set_cmap("gray")
-ax2[1, 0].get_xaxis().set_ticks([])
-ax2[1, 0].get_yaxis().set_ticks([])
-ax2[1, 0].set_title("L2-Map1ReLU")
-
-ax2[1, 1].imshow(l2_feature_map_relu[:, :, 1]).set_cmap("gray")
-ax2[1, 1].get_xaxis().set_ticks([])
-ax2[1, 1].get_yaxis().set_ticks([])
-ax2[1, 1].set_title("L2-Map2ReLU")
-
-ax2[1, 2].imshow(l2_feature_map_relu[:, :, 2]).set_cmap("gray")
-ax2[1, 2].get_xaxis().set_ticks([])
-ax2[1, 2].get_yaxis().set_ticks([])
-ax2[1, 2].set_title("L2-Map3ReLU")
-
-ax2[2, 0].imshow(l2_feature_map_relu_pool[:, :, 0]).set_cmap("gray")
-ax2[2, 0].get_xaxis().set_ticks([])
-ax2[2, 0].get_yaxis().set_ticks([])
-ax2[2, 0].set_title("L2-Map1ReLUPool")
-
-ax2[2, 1].imshow(l2_feature_map_relu_pool[:, :, 1]).set_cmap("gray")
-ax2[2, 1].get_xaxis().set_ticks([])
-ax2[2, 1].get_yaxis().set_ticks([])
-ax2[2, 1].set_title("L2-Map2ReLUPool")
-
-ax2[2, 2].imshow(l2_feature_map_relu_pool[:, :, 2]).set_cmap("gray")
-ax2[2, 2].get_xaxis().set_ticks([])
-ax2[2, 2].get_yaxis().set_ticks([])
-ax2[2, 2].set_title("L2-Map3ReLUPool")
-
-matplotlib.pyplot.savefig("L2.png", bbox_inches="tight")
-matplotlib.pyplot.close(fig2)
-
-# Layer 3
-fig3, ax3 = matplotlib.pyplot.subplots(nrows=1, ncols=3)
-ax3[0].imshow(l3_feature_map[:, :, 0]).set_cmap("gray")
-ax3[0].get_xaxis().set_ticks([])
-ax3[0].get_yaxis().set_ticks([])
-ax3[0].set_title("L3-Map1")
-
-ax3[1].imshow(l3_feature_map_relu[:, :, 0]).set_cmap("gray")
-ax3[1].get_xaxis().set_ticks([])
-ax3[1].get_yaxis().set_ticks([])
-ax3[1].set_title("L3-Map1ReLU")
-
-ax3[2].imshow(l3_feature_map_relu_pool[:, :, 0]).set_cmap("gray")
-ax3[2].get_xaxis().set_ticks([])
-ax3[2].get_yaxis().set_ticks([])
-ax3[2].set_title("L3-Map1ReLUPool")
-
-matplotlib.pyplot.savefig("L3.png", bbox_inches="tight")
-matplotlib.pyplot.close(fig3)
