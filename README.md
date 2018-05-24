@@ -91,9 +91,14 @@ print("**End of conv layer 3**\n")
 The following graph shows the outputs of the above conv-relu-pool layers.
 ![l3](https://user-images.githubusercontent.com/16560492/39051603-76339f3e-44a9-11e8-8e4e-9303a51aaa79.png)
 
+An article describing this project is titled "Building Convolutional Neural Network using NumPy from Scratch". It is available in these links:
+https://www.linkedin.com/pulse/building-convolutional-neural-network-using-numpy-from-ahmed-gad/<br>
+https://www.kdnuggets.com/2018/04/building-convolutional-neural-network-numpy-scratch.html<br>
+It is also translated into Chinese: http://m.aliyun.com/yunqi/articles/585741<br>
+
 For more info.:
-KDnuggets: https://www.kdnuggets.com/author/ahmed-gad
-LinkedIn: https://www.linkedin.com/in/ahmedfgad
-Facebook: https://www.facebook.com/ahmed.f.gadd
-ahmed.f.gad@gmail.com
-ahmed.fawzy@ci.menofia.edu.eg
+KDnuggets: https://www.kdnuggets.com/author/ahmed-gad<br>
+LinkedIn: https://www.linkedin.com/in/ahmedfgad<br>
+Facebook: https://www.facebook.com/ahmed.f.gadd<br>
+ahmed.f.gad@gmail.com<br>
+ahmed.fawzy@ci.menofia.edu.eg<br>
