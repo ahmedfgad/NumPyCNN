@@ -7,6 +7,9 @@ Convolutional neural network implementation using NumPy. Just three layers are c
 5.	Max Pooling layer: Applying the pooling operation on the output of ReLU layer.
 6.	Stacking conv, ReLU, and max pooling layers
 
+**The project is tested using Python 3.5.2 installed inside Anaconda 4.2.0 (64-bit)
+NumPy version used is 1.14.0**
+
 The file named **example.py** is an example of using the project.
 The code starts by reading an input image. That image can be either single or multi-dimensional image.
 
