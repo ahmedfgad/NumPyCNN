@@ -23,25 +23,25 @@ def conv_(img, conv_filter):
     filter_size = conv_filter.shape[1]
     result = numpy.zeros((img.shape))
     #Looping through the image to apply the convolution operation.
-    for r in numpy.uint16(numpy.arange(filter_size/2, 
-                          img.shape[0]-filter_size/2)):
-        for c in numpy.uint16(numpy.arange(filter_size/2, 
-                                           img.shape[1]-filter_size/2)):
+    for r in numpy.uint16(numpy.arange(filter_size/2.0, 
+                          img.shape[0]-filter_size/2.0+1)):
+        for c in numpy.uint16(numpy.arange(filter_size/2.0, 
+                                           img.shape[1]-filter_size/2.0+1)):
             """
             Getting the current region to get multiplied with the filter.
             How to loop through the image and get the region based on 
             the image and filer sizes is the most tricky part of convolution.
             """
-            curr_region = img[r-numpy.uint16(numpy.floor(filter_size/2)):r+numpy.uint16(numpy.ceil(filter_size/2)), 
-                              c-numpy.uint16(numpy.floor(filter_size/2)):c+numpy.uint16(numpy.ceil(filter_size/2))]
+            curr_region = img[r-numpy.uint16(numpy.floor(filter_size/2.0)):r+numpy.uint16(numpy.ceil(filter_size/2.0)), 
+                              c-numpy.uint16(numpy.floor(filter_size/2.0)):c+numpy.uint16(numpy.ceil(filter_size/2.0))]
             #Element-wise multipliplication between the current region and the filter.
             curr_result = curr_region * conv_filter
             conv_sum = numpy.sum(curr_result) #Summing the result of multiplication.
             result[r, c] = conv_sum #Saving the summation in the convolution layer feature map.
             
     #Clipping the outliers of the result matrix.
-    final_result = result[numpy.uint16(filter_size/2):result.shape[0]-numpy.uint16(filter_size/2), 
-                          numpy.uint16(filter_size/2):result.shape[1]-numpy.uint16(filter_size/2)]
+    final_result = result[numpy.uint16(filter_size/2.0):result.shape[0]-numpy.uint16(filter_size/2.0), 
+                          numpy.uint16(filter_size/2.0):result.shape[1]-numpy.uint16(filter_size/2.0)]
     return final_result
 def conv(img, conv_filter):
     if len(img.shape) > 2 or len(conv_filter.shape) > 3: # Check if number of image channels matches the filter depth.
