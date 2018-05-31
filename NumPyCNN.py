@@ -68,7 +68,7 @@ def pooling(feature_map, size=2, stride=2):
         for r in numpy.arange(0,feature_map.shape[0]-size-1, stride):
             c2 = 0
             for c in numpy.arange(0, feature_map.shape[1]-size-1, stride):
-                pool_out[r2, c2, map_num] = numpy.max(feature_map[r:r+size,  c:c+size])
+                pool_out[r2, c2, map_num] = numpy.max([feature_map[r:r+size,  c:c+size]])  # numpy.max and max is different
                 c2 = c2 + 1
             r2 = r2 +1
     return pool_out
@@ -79,7 +79,7 @@ def relu(feature_map):
     for map_num in range(feature_map.shape[-1]):
         for r in numpy.arange(0,feature_map.shape[0]):
             for c in numpy.arange(0, feature_map.shape[1]):
-                relu_out[r, c, map_num] = numpy.max(feature_map[r, c, map_num], 0)
+                relu_out[r, c, map_num] = numpy.max([feature_map[r, c, map_num], 0])  # numpy.max and max is different
     return relu_out
     
 # Reading the image
