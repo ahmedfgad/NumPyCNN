@@ -101,5 +101,5 @@ def relu(feature_map):
     for map_num in range(feature_map.shape[-1]):
         for r in numpy.arange(0,feature_map.shape[0]):
             for c in numpy.arange(0, feature_map.shape[1]):
-                relu_out[r, c, map_num] = numpy.max(feature_map[r, c, map_num], 0)
+                relu_out[r, c, map_num] = numpy.max([feature_map[r, c, map_num], 0])
     return relu_out
