@@ -1,7 +1,7 @@
 import skimage.data
 import numpy
 import matplotlib
-import numpycnn
+import NumPyCNN as numpycnn
 
 """
 Convolutional neural network implementation using NumPy.
