@@ -44,6 +44,10 @@ def conv_(img, conv_filter):
                           numpy.uint16(filter_size/2.0):result.shape[1]-numpy.uint16(filter_size/2.0)]
     return final_result
 def conv(img, conv_filter):
+
+    if len(img.shape) != len(conv_filter.shape) - 1: # Check whether number of dimensions is the same
+        print("Error: Number of dimensions in conv filter and image do not match.")  
+        exit()
     if len(img.shape) > 2 or len(conv_filter.shape) > 3: # Check if number of image channels matches the filter depth.
         if img.shape[-1] != conv_filter.shape[-1]:
             print("Error: Number of channels in both image and filter must match.")
