@@ -68,6 +68,37 @@ print("\n**Pooling**")
 l3_feature_map_relu_pool = numpycnn.pooling(l3_feature_map_relu, 2, 2)
 print("**End of conv layer 3**\n")
 
+# Forth conv layer
+l4_filter = numpy.random.rand(3, 5, 5, l1_feature_map_relu_pool.shape[-1])
+print("\n**Working with conv layer 24*")
+l4_feature_map = numpycnn.conv(l3_feature_map_relu_pool, l4_filter)
+print("\n**ReLU**")
+l4_feature_map_relu = numpycnn.relu(l4_feature_map)
+print("\n**Pooling**")
+l4_feature_map_relu_pool = numpycnn.pooling(l4_feature_map_relu, 2, 2)
+print("**End of conv layer 4**\n")
+
+# Fifth conv layer
+l5_filter = numpy.random.rand(1, 7, 7, l5_feature_map_relu_pool.shape[-1])
+print("\n**Working with conv layer 5**")
+l5_feature_map = numpycnn.conv(l4_feature_map_relu_pool, l3_filter)
+print("\n**ReLU**")
+l5_feature_map_relu = numpycnn.relu(l5_feature_map)
+print("\n**Pooling**")
+l5_feature_map_relu_pool = numpycnn.pooling(l5_feature_map_relu, 2, 2)
+print("**End of conv layer 5**\n")
+
+# Sixth conv layer
+l6_filter = numpy.random.rand(3, 5, 5, l6_feature_map_relu_pool.shape[-1])
+print("\n**Working with conv layer 6**")
+l6_feature_map = numpycnn.conv(l5_feature_map_relu_pool, l2_filter)
+print("\n**ReLU**")
+l6_feature_map_relu = numpycnn.relu(l6_feature_map)
+print("\n**Pooling**")
+l6_feature_map_relu_pool = numpycnn.pooling(l6_feature_map_relu, 2, 2)
+print("**End of conv layer 6**\n")
+
+
 # Graphing results
 fig0, ax0 = matplotlib.pyplot.subplots(nrows=1, ncols=1)
 ax0.imshow(img).set_cmap("gray")
