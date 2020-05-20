@@ -76,8 +76,6 @@ train_inputs = numpy.load("dataset_inputs.npy")
 train_outputs = numpy.load("dataset_outputs.npy")
 ```
 
-
-
 ## Build Network Architecture
 
 A network of the following architecture is built.
@@ -89,6 +87,9 @@ A network of the following architecture is built.
 - Conv: With 3 filters.
 - ReLU
 - Max Pooling
+- Conv: With 1 filter.
+- ReLU
+- Average Pooling
 - Flatten
 - Dense
 - Dense: With 4 output neurons because the data has 4 classes.
@@ -97,12 +98,13 @@ Here is the code for building such a network. Remember to set the `num_classes` 
 
 ```python
 sample_shape = train_inputs.shape[1:]
+num_classes = 4
 
 input_layer = numpycnn.Input2D(input_shape=sample_shape)
 conv_layer1 = numpycnn.Conv2D(num_filters=2,
                               kernel_size=3,
                               previous_layer=input_layer,
-                              activation_function="relu")
+                              activation_function=None)
 relu_layer1 = numpycnn.ReLU(previous_layer=conv_layer1)
 average_pooling_layer = numpycnn.AveragePooling2D(pool_size=2, 
                                                   previous_layer=relu_layer1,
@@ -113,9 +115,9 @@ conv_layer2 = numpycnn.Conv2D(num_filters=3,
                               previous_layer=average_pooling_layer,
                               activation_function=None)
 relu_layer2 = numpycnn.ReLU(previous_layer=conv_layer2)
-max_pooling_layer = numpycnn.AveragePooling2D(pool_size=2, 
-                                              previous_layer=relu_layer2,
-                                              stride=2)
+max_pooling_layer = numpycnn.MaxPooling2D(pool_size=2, 
+                                          previous_layer=relu_layer2,
+                                          stride=2)
 
 conv_layer3 = numpycnn.Conv2D(num_filters=1,
                               kernel_size=3,
@@ -130,7 +132,6 @@ flatten_layer = numpycnn.Flatten(previous_layer=pooling_layer)
 dense_layer1 = numpycnn.Dense(num_neurons=100, 
                               previous_layer=flatten_layer,
                               activation_function="relu")
-num_classes = 4
 dense_layer2 = numpycnn.Dense(num_neurons=num_classes, 
                               previous_layer=dense_layer1,
                               activation_function="softmax")
@@ -153,13 +154,16 @@ numpycnn.summary(last_layer=dense_layer2)
 <class 'numpycnn.Conv2D'>
 <class 'numpycnn.ReLU'>
 <class 'numpycnn.MaxPooling2D'>
+<class 'numpycnn.Conv2D'>
+<class 'numpycnn.ReLU'>
+<class 'numpycnn.AveragePooling2D'>
 <class 'numpycnn.Flatten'>
 <class 'numpycnn.Dense'>
 <class 'numpycnn.Dense'>
 ----------------------------------------
 ```
 
-Training the Network
+## Training the Network
 
 The `train()` function trains the network. It accepts a parameter named `last_layer` which refers to the output layer in the network. Besides the training data inputs and outputs, it accepts the number of epochs and the learning rate.
 
