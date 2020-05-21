@@ -186,12 +186,15 @@ predictions = numpycnn.predict(last_layer=dense_layer2, train_inputs=train_input
 # Results Visualization
 
 The first **conv-relu-pool** layers:
+
 ![l1](https://user-images.githubusercontent.com/16560492/39051349-ac56ac56-44a8-11e8-8695-29901dd3a811.png)
 
 The second **conv-relu-pool** layers:
+
 ![l2](https://user-images.githubusercontent.com/16560492/39051582-6abe0996-44a9-11e8-88e1-589a673a8b11.png)
 
 The last **conv-relu-pool** layers:
+
 ![l3](https://user-images.githubusercontent.com/16560492/39051603-76339f3e-44a9-11e8-8e4e-9303a51aaa79.png)
 
 # For More Information
