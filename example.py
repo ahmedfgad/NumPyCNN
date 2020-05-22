@@ -1,5 +1,5 @@
 import numpy
-import numpycnn
+import cnn
 
 """
 Convolutional neural network implementation using NumPy
@@ -16,43 +16,43 @@ train_outputs = numpy.load("dataset_outputs.npy")
 sample_shape = train_inputs.shape[1:]
 num_classes = 4
 
-input_layer = numpycnn.Input2D(input_shape=sample_shape)
-conv_layer1 = numpycnn.Conv2D(num_filters=2,
+input_layer = cnn.Input2D(input_shape=sample_shape)
+conv_layer1 = cnn.Conv2D(num_filters=2,
                               kernel_size=3,
                               previous_layer=input_layer,
                               activation_function=None)
-relu_layer1 = numpycnn.ReLU(previous_layer=conv_layer1)
-average_pooling_layer = numpycnn.AveragePooling2D(pool_size=2, 
+relu_layer1 = cnn.ReLU(previous_layer=conv_layer1)
+average_pooling_layer = cnn.AveragePooling2D(pool_size=2, 
                                                   previous_layer=relu_layer1,
                                                   stride=2)
 
-conv_layer2 = numpycnn.Conv2D(num_filters=3,
+conv_layer2 = cnn.Conv2D(num_filters=3,
                               kernel_size=3,
                               previous_layer=average_pooling_layer,
                               activation_function=None)
-relu_layer2 = numpycnn.ReLU(previous_layer=conv_layer2)
-max_pooling_layer = numpycnn.MaxPooling2D(pool_size=2, 
+relu_layer2 = cnn.ReLU(previous_layer=conv_layer2)
+max_pooling_layer = cnn.MaxPooling2D(pool_size=2, 
                                           previous_layer=relu_layer2,
                                           stride=2)
 
-conv_layer3 = numpycnn.Conv2D(num_filters=1,
+conv_layer3 = cnn.Conv2D(num_filters=1,
                               kernel_size=3,
                               previous_layer=max_pooling_layer,
                               activation_function=None)
-relu_layer3 = numpycnn.ReLU(previous_layer=conv_layer3)
-pooling_layer = numpycnn.AveragePooling2D(pool_size=2, 
+relu_layer3 = cnn.ReLU(previous_layer=conv_layer3)
+pooling_layer = cnn.AveragePooling2D(pool_size=2, 
                                           previous_layer=relu_layer3,
                                           stride=2)
 
-flatten_layer = numpycnn.Flatten(previous_layer=pooling_layer)
-dense_layer1 = numpycnn.Dense(num_neurons=100, 
+flatten_layer = cnn.Flatten(previous_layer=pooling_layer)
+dense_layer1 = cnn.Dense(num_neurons=100, 
                               previous_layer=flatten_layer,
                               activation_function="relu")
-dense_layer2 = numpycnn.Dense(num_neurons=num_classes, 
+dense_layer2 = cnn.Dense(num_neurons=num_classes, 
                               previous_layer=dense_layer1,
                               activation_function="softmax")
 
-model = numpycnn.Model(last_layer=dense_layer2,
+model = cnn.Model(last_layer=dense_layer2,
                        epochs=1,
                        learning_rate=0.01)
 
