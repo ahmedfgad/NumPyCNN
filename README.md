@@ -40,9 +40,10 @@ It supports the following activation functions:
 
 1.	Prepare the training data.
 2.	Build network architecture.
-3.	Network architecture summary.
-4.	Train the network.
-5.	Make predictions.
+3.	Create a model.
+4.	Network architecture summary.
+5.	Train the network.
+6.	Make predictions.
 
 ## Prepare the Training Data
 
@@ -137,12 +138,24 @@ dense_layer2 = numpycnn.Dense(num_neurons=num_classes,
                               activation_function="softmax")
 ```
 
-## Network Architecture Summary
+After stacking the network layers, a model is created.
 
-The `summary()` function prints a summary of the network architecture.
+## Creating a Model
+
+A model can be created as an instance of the `numpycnn.Model` class. Its constructor accepts the last layer in the network architecture in addition to some optional parameters.
 
 ```python
-numpycnn.summary(last_layer=dense_layer2)
+model = numpycnn.Model(last_layer=dense_layer2,
+                       epochs=1,
+                       learning_rate=0.01)
+```
+
+## Network Architecture Summary
+
+The `summary()` method in the `numpycnn.Model` class prints a summary of the network architecture.
+
+```python
+model.summary(last_layer=dense_layer2)
 ```
 
 ```python
@@ -165,22 +178,19 @@ numpycnn.summary(last_layer=dense_layer2)
 
 ## Training the Network
 
-The `train()` function trains the network. It accepts a parameter named `last_layer` which refers to the output layer in the network. Besides the training data inputs and outputs, it accepts the number of epochs and the learning rate.
+The `train()` method in the `numpycnn.Model` class trains the network. It accepts the training data inputs and outputs.
 
 ```python
-numpycnn.train(last_layer=dense_layer2, 
-               train_inputs=train_inputs, 
-               train_outputs=train_outputs, 
-               epochs=2,
-               learning_rate=0.1)
+model.train(train_inputs=train_inputs, 
+            train_outputs=train_outputs)
 ```
 
 ## Making Predictions
 
-After the network is trained, the `predict()` function can be used for making predictions.
+After the network is trained, the `predict()` method in the `numpycnn.Model` class can be used for making predictions.
 
 ```python
-predictions = numpycnn.predict(last_layer=dense_layer2, train_inputs=train_inputs)
+predictions = model.predict(data_inputs=train_inputs)
 ```
 
 # Results Visualization

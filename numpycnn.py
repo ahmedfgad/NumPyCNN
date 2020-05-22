@@ -379,98 +379,95 @@ class Dense:
 
         self.layer_output = self.activation(sop)
 
-def train(last_layer, train_inputs, train_outputs, epochs=10, learning_rate=0.01):
-    if (train_inputs.ndim != 4):
-        raise ValueError("The training data input has {num_dims} but it must have 4 dimensions. The first dimension is the number of training samples, the second & third dimensions represent the width and height of the sample, and the fourth dimension represents the number of channels in the sample.".format(num_dims=train_inputs.ndim))
-    network_layers = get_layers(last_layer=last_layer)
-
-    network_predictions = []
-    network_error = 0
-
-    for epoch in range(epochs):
-        print("Epoch {epoch}".format(epoch=epoch))
-        for sample_idx in range(train_inputs.shape[0]):
-            # print("Sample {sample_idx}".format(sample_idx=sample_idx))
-            feed_sample(network_layers, train_inputs[sample_idx, :])
-
-            try:
-                predicted_label = numpy.where(numpy.max(last_layer.layer_output) == last_layer.layer_output)[0][0]
-            except IndexError:
-                print(last_layer.layer_output)
-                raise IndexError("Index out of range")
-            network_predictions.append(predicted_label)
-
-            network_error = network_error + abs(predicted_label - train_outputs[sample_idx])
-
-        update_weights(last_layer, network_error, learning_rate)
-
-def feed_sample(network_layers, sample):
-    last_layer_outputs = sample
-    for layer in network_layers:
-        if type(layer) is Conv2D:
-            layer.conv(input2D=last_layer_outputs)
-        elif type(layer) is Dense:
-            layer.dense_layer(layer_input=last_layer_outputs)
-        elif type(layer) is MaxPooling2D:
-            layer.max_pooling(input2D=last_layer_outputs)
-        elif type(layer) is AveragePooling2D:
-            layer.average_pooling(input2D=last_layer_outputs)
-        elif type(layer) is ReLU:
-            layer.relu_layer(layer_input=last_layer_outputs)
-        elif type(layer) is Flatten:
-            layer.flatten(input2D=last_layer_outputs)
-        elif type(layer) is Input2D:
-            pass
-        else:
-            print("Other")
-            raise TypeError("The layer of type {layer_type} is not supported yet.".format(layer_type=type(layer)))
-        
-        last_layer_outputs = layer.layer_output
-    return network_layers[-1].layer_output
-
-def update_weights(last_layer, network_error, learning_rate):
-    network_layers = get_layers(last_layer=last_layer)
-
-    for layer in network_layers:
-        if "trained_weights" in vars(layer).keys():
-            layer.trained_weights = layer.trained_weights - network_error * learning_rate * layer.trained_weights
-
-def predict(last_layer, train_inputs):
-    if (train_inputs.ndim != 4):
-        raise ValueError("The training data input has {num_dims} but it must have 4 dimensions. The first dimension is the number of training samples, the second & third dimensions represent the width and height of the sample, and the fourth dimension represents the number of channels in the sample.".format(num_dims=train_inputs.ndim))
-    network_layers = get_layers(last_layer=last_layer)
-
-    predictions = []
-    for sample in train_inputs:
-        probs = feed_sample(network_layers=network_layers, sample=sample)
-        predicted_label = numpy.where(numpy.max(probs) == probs)[0][0]
-        predictions.append(predicted_label)
-    return predictions
-
-def get_layers(last_layer):
-    network_layers = []
-
-    layer = last_layer
-
-    while "previous_layer" in layer.__init__.__code__.co_varnames:
-        network_layers.insert(0, layer)
-        layer = layer.previous_layer
+class Model:
     
-    return network_layers
+    def __init__(self, last_layer, epochs=10, learning_rate=0.01):
+        self.last_layer = last_layer
+        self.epochs = epochs
+        self.learning_rate = learning_rate
+        
+        self.network_layers = self.get_layers()
 
-def summary(last_layer):
-    network_layers = []
-    layer = last_layer
+    def get_layers(self):
+        network_layers = []
 
-    while "previous_layer" in layer.__init__.__code__.co_varnames:
-        network_layers.insert(0, layer.__class__)
+        layer = self.last_layer
 
-        # Go to the previous layer.
-        layer = layer.previous_layer
-    else: # To return the input layer.
-        network_layers.insert(0, layer.__class__)
+        while "previous_layer" in layer.__init__.__code__.co_varnames:
+            network_layers.insert(0, layer)
+            layer = layer.previous_layer
+        
+        return network_layers
 
-    print("\n----------Network Architecture----------")
-    for layer in network_layers:
-        print(layer)
-    print("----------------------------------------\n")
+    def train(self, train_inputs, train_outputs):
+        if (train_inputs.ndim != 4):
+            raise ValueError("The training data input has {num_dims} but it must have 4 dimensions. The first dimension is the number of training samples, the second & third dimensions represent the width and height of the sample, and the fourth dimension represents the number of channels in the sample.".format(num_dims=train_inputs.ndim))    
+
+        if (train_inputs.shape[0] != len(train_outputs)):
+            raise ValueError("Mismatch between the number of input samples and number of labels: {num_samples_inputs} != {num_samples_outputs}.".format(num_samples_inputs=train_inputs.shape[0], num_samples_outputs=len(train_outputs)))
+
+        network_predictions = []
+        network_error = 0
+    
+        for epoch in range(self.epochs):
+            print("Epoch {epoch}".format(epoch=epoch))
+            for sample_idx in range(train_inputs.shape[0]):
+                # print("Sample {sample_idx}".format(sample_idx=sample_idx))
+                self.feed_sample(train_inputs[sample_idx, :])
+    
+                try:
+                    predicted_label = numpy.where(numpy.max(self.last_layer.layer_output) == self.last_layer.layer_output)[0][0]
+                except IndexError:
+                    print(self.last_layer.layer_output)
+                    raise IndexError("Index out of range")
+                network_predictions.append(predicted_label)
+    
+                network_error = network_error + abs(predicted_label - train_outputs[sample_idx])
+
+            self.update_weights(network_error)
+
+    def feed_sample(self, sample):
+        last_layer_outputs = sample
+        for layer in self.network_layers:
+            if type(layer) is Conv2D:
+                layer.conv(input2D=last_layer_outputs)
+            elif type(layer) is Dense:
+                layer.dense_layer(layer_input=last_layer_outputs)
+            elif type(layer) is MaxPooling2D:
+                layer.max_pooling(input2D=last_layer_outputs)
+            elif type(layer) is AveragePooling2D:
+                layer.average_pooling(input2D=last_layer_outputs)
+            elif type(layer) is ReLU:
+                layer.relu_layer(layer_input=last_layer_outputs)
+            elif type(layer) is Flatten:
+                layer.flatten(input2D=last_layer_outputs)
+            elif type(layer) is Input2D:
+                pass
+            else:
+                print("Other")
+                raise TypeError("The layer of type {layer_type} is not supported yet.".format(layer_type=type(layer)))
+
+            last_layer_outputs = layer.layer_output
+        return self.network_layers[-1].layer_output
+
+    def update_weights(self, network_error):
+        for layer in self.network_layers:
+            if "trained_weights" in vars(layer).keys():
+                layer.trained_weights = layer.trained_weights - network_error * self.learning_rate * layer.trained_weights
+
+    def predict(self, data_inputs):
+        if (data_inputs.ndim != 4):
+            raise ValueError("The data input has {num_dims} but it must have 4 dimensions. The first dimension is the number of training samples, the second & third dimensions represent the width and height of the sample, and the fourth dimension represents the number of channels in the sample.".format(num_dims=data_inputs.ndim))
+
+        predictions = []
+        for sample in data_inputs:
+            probs = self.feed_sample(sample=sample)
+            predicted_label = numpy.where(numpy.max(probs) == probs)[0][0]
+            predictions.append(predicted_label)
+        return predictions
+
+    def summary(self):
+        print("\n----------Network Architecture----------")
+        for layer in self.network_layers:
+            print(type(layer))
+        print("----------------------------------------\n")
