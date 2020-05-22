@@ -52,13 +52,14 @@ dense_layer2 = numpycnn.Dense(num_neurons=num_classes,
                               previous_layer=dense_layer1,
                               activation_function="softmax")
 
-numpycnn.summary(last_layer=dense_layer2)
+model = numpycnn.Model(last_layer=dense_layer2,
+                       epochs=1,
+                       learning_rate=0.01)
 
-numpycnn.train(last_layer=dense_layer2, 
-               train_inputs=train_inputs, 
-               train_outputs=train_outputs, 
-               epochs=1,
-               learning_rate=0.1)
+model.summary()
 
-predictions = numpycnn.predict(last_layer=dense_layer2, train_inputs=train_inputs)
+model.train(train_inputs=train_inputs[:5, :], 
+            train_outputs=train_outputs[:5])
+
+predictions = model.predict(data_inputs=train_inputs[:5, :])
 print(predictions)
