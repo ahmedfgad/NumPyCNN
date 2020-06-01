@@ -11,96 +11,62 @@ The project can be used for classification problems where only 1 class per sampl
 
 The project will be extended to **train CNN using the genetic algorithm** with the help of a library named [PyGAD](https://pypi.org/project/pygad). Check the library's documentation at [Read The Docs](https://pygad.readthedocs.io/): https://pygad.readthedocs.io
 
-Install it via pip:
+# Installation
+
+To install [PyGAD](https://pypi.org/project/pygad), simply use pip to download and install the library from [PyPI](https://pypi.org/project/pygad) (Python Package Index). The library lives a PyPI at this page https://pypi.org/project/pygad.
+
+For Windows, issue the following command:
 
 ```python
 pip install pygad
 ```
 
-# Supported Layers
+For Linux and Mac, replace `pip` by use `pip3` because the library only supports Python 3.
 
-The project implements the following layers:
+```python
+pip3 install pygad
+```
 
-1. Convolution
-2. Dense
-3. Average Pooling
-4. Max Pooling
-5. ReLU
-6. Flatten
+PyGAD is developed in Python 3.7.3 and depends on NumPy for creating and manipulating arrays and Matplotlib for creating figures. The exact NumPy version used in developing PyGAD is 1.16.4. For Matplotlib, the version is 3.1.0.
 
-# Supported Activation Functions
+To get started with PyGAD, please read the documentation at [Read The Docs](https://pygad.readthedocs.io/) https://pygad.readthedocs.io.
 
-It supports the following activation functions:
+# PyGAD Source Code
 
-1. ReLU
-2. Sigmoid
-3. Softmax
+The source code of the PyGAD' modules is found in the following GitHub projects:
 
-# Steps to Use the Project
+- [pygad](https://github.com/ahmedfgad/GeneticAlgorithmPython): (https://github.com/ahmedfgad/GeneticAlgorithmPython)
+- [pygad.nn](https://github.com/ahmedfgad/NumPyANN): https://github.com/ahmedfgad/NumPyANN
+- [pygad.gann](https://github.com/ahmedfgad/NeuralGenetic): https://github.com/ahmedfgad/NeuralGenetic
+- [pygad.cnn](https://github.com/ahmedfgad/NumPyCNN): https://github.com/ahmedfgad/NumPyCNN
+- [pygad.gacnn](https://github.com/ahmedfgad/CNNGenetic): https://github.com/ahmedfgad/CNNGenetic
 
-1.	Prepare the training data.
-2.	Build network architecture.
-3.	Create a model.
-4.	Network architecture summary.
-5.	Train the network.
-6.	Make predictions.
+The documentation of PyGAD is available at [Read The Docs](https://pygad.readthedocs.io/) https://pygad.readthedocs.io.
 
-## Prepare the Training Data
+# PyGAD Documentation
 
-The training data is prepared as 2 arrays, one for the inputs and another for the outputs. 
+The documentation of the PyGAD library is available at [Read The Docs](https://pygad.readthedocs.io) at this link: https://pygad.readthedocs.io. It discusses the modules supported by PyGAD, all its classes, methods, attribute, and functions. For each module, a number of examples are given.
 
-The input array is a 4-dimensional array with the following dimensions:
+If there is an issue using PyGAD, feel free to post at issue in this [GitHub repository](https://github.com/ahmedfgad/GeneticAlgorithmPython) https://github.com/ahmedfgad/GeneticAlgorithmPython or by sending an e-mail to ahmed.f.gad@gmail.com. 
 
-1. Number of training samples.
-2. Width of the sample.
-3. Height of the sample.
-4. Number of channels in the sample. Set to 1 if the input has no channels.
+If you built a project that uses PyGAD, then please drop an e-mail to ahmed.f.gad@gmail.com with the following information so that your project is included in the documentation.
 
-The output array has only 1 value per sample representing the class label.
+- Project title
+- Brief description
+- Preferably, a link that directs the readers to your project
 
-Attached to the project 2 NumPy arrays created out of 4 classes from the Fruits360 image dataset. The classes names are **Apple Braeburn**, **Lemon Meyer**, **Mango**, and **Raspberry**.
+Please check the **Contact Us** section for more contact details.
 
-The images and their class labels are saved as 2 `.npy` files named:
+# Example
 
-1. dataset_inputs.npy
-
-2. dataset_outputs.npy
-
-For the purpose of just demonstrating how thins are working, only 20 samples per class are used and thus there is a total of 80 samples in the dataset. 
-
-The dataset_inputs.npy file holds the dataset inputs and dataset_outputs.npy holds the outputs. The shape of the inputs is `(80, 100, 100, 3)` where the single image shape is `(100, 100, 3)`. The shape of the outputs is `(80)`.
-
-Here is how the 2 files are read:
+Check the [PyGAD's documentation](https://pygad.readthedocs.io/en/latest/README_pygad_cnn_ReadTheDocs.html) for information about the implementation of this example.
 
 ```python
 import numpy
+import pygad.cnn
 
 train_inputs = numpy.load("dataset_inputs.npy")
 train_outputs = numpy.load("dataset_outputs.npy")
-```
-
-## Build Network Architecture
-
-A network of the following architecture is built.
-
-- Input
-- Conv: With 2 filters.
-- ReLU
-- Average Pooling
-- Conv: With 3 filters.
-- ReLU
-- Max Pooling
-- Conv: With 1 filter.
-- ReLU
-- Average Pooling
-- Flatten
-- Dense
-- Dense: With 4 output neurons because the data has 4 classes.
-
-Here is the code for building such a network. Remember to set the `num_classes` variable according to the number of classes in the dataset.
-
-```python
-import pygad.cnn
 
 sample_shape = train_inputs.shape[1:]
 num_classes = 4
@@ -110,7 +76,7 @@ conv_layer1 = pygad.cnn.Conv2D(num_filters=2,
                                kernel_size=3,
                                previous_layer=input_layer,
                                activation_function=None)
-relu_layer1 = pygad.cnn.ReLU(previous_layer=conv_layer1)
+relu_layer1 = pygad.cnn.Sigmoid(previous_layer=conv_layer1)
 average_pooling_layer = pygad.cnn.AveragePooling2D(pool_size=2, 
                                                    previous_layer=relu_layer1,
                                                    stride=2)
@@ -140,76 +106,26 @@ dense_layer1 = pygad.cnn.Dense(num_neurons=100,
 dense_layer2 = pygad.cnn.Dense(num_neurons=num_classes, 
                                previous_layer=dense_layer1,
                                activation_function="softmax")
-```
 
-After stacking the network layers, a model is created.
-
-## Creating a Model
-
-A model can be created as an instance of the `pygad.cnn.Model` class. Its constructor accepts the last layer in the network architecture in addition to some optional parameters.
-
-```python
 model = pygad.cnn.Model(last_layer=dense_layer2,
                         epochs=1,
                         learning_rate=0.01)
-```
 
-## Network Architecture Summary
+model.summary()
 
-The `summary()` method in the `pygad.cnn.Model` class prints a summary of the network architecture.
-
-```python
-model.summary(last_layer=dense_layer2)
-```
-
-```python
-----------Network Architecture----------
-<class 'cnn.Input2D'>
-<class 'cnn.Conv2D'>
-<class 'cnn.ReLU'>
-<class 'cnn.AveragePooling2D'>
-<class 'cnn.Conv2D'>
-<class 'cnn.ReLU'>
-<class 'cnn.MaxPooling2D'>
-<class 'cnn.Conv2D'>
-<class 'cnn.ReLU'>
-<class 'cnn.AveragePooling2D'>
-<class 'cnn.Flatten'>
-<class 'cnn.Dense'>
-<class 'cnn.Dense'>
-----------------------------------------
-```
-
-## Training the Network
-
-The `train()` method in the `pygad.cnn.Model` class trains the network. It accepts the training data inputs and outputs.
-
-```python
 model.train(train_inputs=train_inputs, 
             train_outputs=train_outputs)
-```
 
-## Making Predictions
-
-After the network is trained, the `predict()` method in the `pygad.cnn.Model` class can be used for making predictions.
-
-```python
 predictions = model.predict(data_inputs=train_inputs)
+print(predictions)
+
+num_wrong = numpy.where(predictions != train_outputs)[0]
+num_correct = train_outputs.size - num_wrong.size
+accuracy = 100 * (num_correct/train_outputs.size)
+print("Number of correct classifications : {num_correct}.".format(num_correct=num_correct))
+print("Number of wrong classifications : {num_wrong}.".format(num_wrong=num_wrong.size))
+print("Classification accuracy : {accuracy}.".format(accuracy=accuracy))
 ```
-
-# Results Visualization
-
-The first **conv-relu-pool** layers:
-
-![l1](https://user-images.githubusercontent.com/16560492/39051349-ac56ac56-44a8-11e8-8695-29901dd3a811.png)
-
-The second **conv-relu-pool** layers:
-
-![l2](https://user-images.githubusercontent.com/16560492/39051582-6abe0996-44a9-11e8-88e1-589a673a8b11.png)
-
-The last **conv-relu-pool** layers:
-
-![l3](https://user-images.githubusercontent.com/16560492/39051603-76339f3e-44a9-11e8-8e4e-9303a51aaa79.png)
 
 # For More Information
 
