@@ -1,5 +1,5 @@
 import numpy
-import cnn
+import pygad.cnn
 
 """
 Convolutional neural network implementation using NumPy
@@ -16,50 +16,57 @@ train_outputs = numpy.load("dataset_outputs.npy")
 sample_shape = train_inputs.shape[1:]
 num_classes = 4
 
-input_layer = cnn.Input2D(input_shape=sample_shape)
-conv_layer1 = cnn.Conv2D(num_filters=2,
-                              kernel_size=3,
-                              previous_layer=input_layer,
-                              activation_function=None)
-relu_layer1 = cnn.ReLU(previous_layer=conv_layer1)
-average_pooling_layer = cnn.AveragePooling2D(pool_size=2, 
-                                                  previous_layer=relu_layer1,
-                                                  stride=2)
+input_layer = pygad.cnn.Input2D(input_shape=sample_shape)
+conv_layer1 = pygad.cnn.Conv2D(num_filters=2,
+                               kernel_size=3,
+                               previous_layer=input_layer,
+                               activation_function=None)
+relu_layer1 = pygad.cnn.Sigmoid(previous_layer=conv_layer1)
+average_pooling_layer = pygad.cnn.AveragePooling2D(pool_size=2, 
+                                                   previous_layer=relu_layer1,
+                                                   stride=2)
 
-conv_layer2 = cnn.Conv2D(num_filters=3,
-                              kernel_size=3,
-                              previous_layer=average_pooling_layer,
-                              activation_function=None)
-relu_layer2 = cnn.ReLU(previous_layer=conv_layer2)
-max_pooling_layer = cnn.MaxPooling2D(pool_size=2, 
-                                          previous_layer=relu_layer2,
-                                          stride=2)
+conv_layer2 = pygad.cnn.Conv2D(num_filters=3,
+                               kernel_size=3,
+                               previous_layer=average_pooling_layer,
+                               activation_function=None)
+relu_layer2 = pygad.cnn.ReLU(previous_layer=conv_layer2)
+max_pooling_layer = pygad.cnn.MaxPooling2D(pool_size=2, 
+                                           previous_layer=relu_layer2,
+                                           stride=2)
 
-conv_layer3 = cnn.Conv2D(num_filters=1,
-                              kernel_size=3,
-                              previous_layer=max_pooling_layer,
-                              activation_function=None)
-relu_layer3 = cnn.ReLU(previous_layer=conv_layer3)
-pooling_layer = cnn.AveragePooling2D(pool_size=2, 
-                                          previous_layer=relu_layer3,
-                                          stride=2)
+conv_layer3 = pygad.cnn.Conv2D(num_filters=1,
+                               kernel_size=3,
+                               previous_layer=max_pooling_layer,
+                               activation_function=None)
+relu_layer3 = pygad.cnn.ReLU(previous_layer=conv_layer3)
+pooling_layer = pygad.cnn.AveragePooling2D(pool_size=2, 
+                                           previous_layer=relu_layer3,
+                                           stride=2)
 
-flatten_layer = cnn.Flatten(previous_layer=pooling_layer)
-dense_layer1 = cnn.Dense(num_neurons=100, 
-                              previous_layer=flatten_layer,
-                              activation_function="relu")
-dense_layer2 = cnn.Dense(num_neurons=num_classes, 
-                              previous_layer=dense_layer1,
-                              activation_function="softmax")
+flatten_layer = pygad.cnn.Flatten(previous_layer=pooling_layer)
+dense_layer1 = pygad.cnn.Dense(num_neurons=100, 
+                               previous_layer=flatten_layer,
+                               activation_function="relu")
+dense_layer2 = pygad.cnn.Dense(num_neurons=num_classes, 
+                               previous_layer=dense_layer1,
+                               activation_function="softmax")
 
-model = cnn.Model(last_layer=dense_layer2,
-                       epochs=1,
-                       learning_rate=0.01)
+model = pygad.cnn.Model(last_layer=dense_layer2,
+                        epochs=1,
+                        learning_rate=0.01)
 
 model.summary()
 
-model.train(train_inputs=train_inputs[:5, :], 
-            train_outputs=train_outputs[:5])
+model.train(train_inputs=train_inputs, 
+            train_outputs=train_outputs)
 
-predictions = model.predict(data_inputs=train_inputs[:5, :])
+predictions = model.predict(data_inputs=train_inputs)
 print(predictions)
+
+num_wrong = numpy.where(predictions != train_outputs)[0]
+num_correct = train_outputs.size - num_wrong.size
+accuracy = 100 * (num_correct/train_outputs.size)
+print("Number of correct classifications : {num_correct}.".format(num_correct=num_correct))
+print("Number of wrong classifications : {num_wrong}.".format(num_wrong=num_wrong.size))
+print("Classification accuracy : {accuracy}.".format(accuracy=accuracy))

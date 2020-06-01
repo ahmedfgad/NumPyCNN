@@ -106,7 +106,7 @@ def layers_weights_as_matrix(model, vector_weights):
     model: A reference to the instance from the cnn.Model class.
     vector_weights: The network weights as vectors where the weights of each layer form a single vector.
 
-    Returns a list (network_weights) holding the weights of the CNN layers as a vector.
+    Returns a list (network_weights) holding the weights of the CNN layers as matrices.
     """
 
     network_weights = []
@@ -221,8 +221,7 @@ class Input2D:
 
         for dim_idx, dim in enumerate(input_shape):
             if dim <= 0:
-                raise ValueError("The dimension size of the inputs cannot be <=0. Please pass a valid value to the 'input_size' parameter.")
-            # The number of neurons in the input layer.
+                raise ValueError("The dimension size of the inputs cannot be <= 0. Please pass a valid value to the 'input_size' parameter.")
 
         self.input_shape = input_shape # Shape of the input sample.
         self.layer_output_size = input_shape # Shape of the output from the current layer. For an input layer, it is the same as the shape of the input sample.
@@ -234,7 +233,7 @@ class Conv2D:
     """
 
     def __init__(self, num_filters, kernel_size, previous_layer, activation_function=None):
-        
+
         """
         num_filters: Number of filters in the convolution layer.
         kernel_size: Kernel size of the filter.
@@ -365,72 +364,6 @@ class Conv2D:
 
         self.layer_output = self.conv_(input2D, self.trained_weights)
 
-class MaxPooling2D:
-
-    """
-    Implementing the max pooling layer.
-    """
-
-    def __init__(self, pool_size, previous_layer, stride=2):
-        
-        """
-        pool_size: Pool size.
-        previous_layer: Reference to the previous layer in the CNN architecture.
-        stride=2: Stride
-        """
-        
-        if not (type(pool_size) is int):
-            raise ValueError("The expected type of the pool_size is int but {pool_size_type} found.".format(pool_size_type=type(pool_size)))
-
-        if pool_size <= 0:
-            raise ValueError("The passed value to the pool_size parameter cannot be <= 0.")
-        self.pool_size = pool_size
-
-        if stride <= 0:
-            raise ValueError("The passed value to the stride parameter cannot be <= 0.")
-        self.stride = stride
-
-        if previous_layer is None:
-            raise TypeError("The previous layer cannot be of Type 'None'. Please pass a valid layer to the 'previous_layer' parameter.")
-        # A reference to the layer that preceeds the current layer in the network architecture.
-        self.previous_layer = previous_layer
-
-        # Size of the input to the layer.
-        self.layer_input_size = self.previous_layer.layer_output_size
-
-        # Size of the output from the layer.
-        self.layer_output_size = (numpy.uint16((self.previous_layer.layer_output_size[0] - self.pool_size + 1)/stride + 1), 
-                                  numpy.uint16((self.previous_layer.layer_output_size[1] - self.pool_size + 1)/stride + 1), 
-                                  self.previous_layer.layer_output_size[-1])
-
-        # The layer_output attribute holds the latest output from the layer.
-        self.layer_output = None
-
-    def max_pooling(self, input2D):
-        
-        """
-        Applies the max pooling operation.
-        
-        input2D: The input to which the max pooling operation is applied.
-
-        The max_pooling() method saves its result in the layer_output attribute.
-        """
-        
-        # Preparing the output of the pooling operation.
-        pool_out = numpy.zeros((numpy.uint16((input2D.shape[0]-self.pool_size+1)/self.stride+1),
-                                numpy.uint16((input2D.shape[1]-self.pool_size+1)/self.stride+1),
-                                input2D.shape[-1]))
-        for map_num in range(input2D.shape[-1]):
-            r2 = 0
-            for r in numpy.arange(0,input2D.shape[0]-self.pool_size+1, self.stride):
-                c2 = 0
-                for c in numpy.arange(0, input2D.shape[1]-self.pool_size+1, self.stride):
-                    pool_out[r2, c2, map_num] = numpy.max([input2D[r:r+self.pool_size,  c:c+self.pool_size, map_num]])
-                    c2 = c2 + 1
-                r2 = r2 +1
-
-        self.layer_output = pool_out
-
 class AveragePooling2D:
 
     """
@@ -497,6 +430,151 @@ class AveragePooling2D:
 
         self.layer_output = pool_out
 
+class MaxPooling2D:
+
+    """
+    Similar to the AveragePooling2D class except that it implements max pooling.
+    """
+
+    def __init__(self, pool_size, previous_layer, stride=2):
+        
+        """
+        pool_size: Pool size.
+        previous_layer: Reference to the previous layer in the CNN architecture.
+        stride=2: Stride
+        """
+        
+        if not (type(pool_size) is int):
+            raise ValueError("The expected type of the pool_size is int but {pool_size_type} found.".format(pool_size_type=type(pool_size)))
+
+        if pool_size <= 0:
+            raise ValueError("The passed value to the pool_size parameter cannot be <= 0.")
+        self.pool_size = pool_size
+
+        if stride <= 0:
+            raise ValueError("The passed value to the stride parameter cannot be <= 0.")
+        self.stride = stride
+
+        if previous_layer is None:
+            raise TypeError("The previous layer cannot be of Type 'None'. Please pass a valid layer to the 'previous_layer' parameter.")
+        # A reference to the layer that preceeds the current layer in the network architecture.
+        self.previous_layer = previous_layer
+
+        # Size of the input to the layer.
+        self.layer_input_size = self.previous_layer.layer_output_size
+
+        # Size of the output from the layer.
+        self.layer_output_size = (numpy.uint16((self.previous_layer.layer_output_size[0] - self.pool_size + 1)/stride + 1), 
+                                  numpy.uint16((self.previous_layer.layer_output_size[1] - self.pool_size + 1)/stride + 1), 
+                                  self.previous_layer.layer_output_size[-1])
+
+        # The layer_output attribute holds the latest output from the layer.
+        self.layer_output = None
+
+    def max_pooling(self, input2D):
+        
+        """
+        Applies the max pooling operation.
+        
+        input2D: The input to which the max pooling operation is applied.
+
+        The max_pooling() method saves its result in the layer_output attribute.
+        """
+        
+        # Preparing the output of the pooling operation.
+        pool_out = numpy.zeros((numpy.uint16((input2D.shape[0]-self.pool_size+1)/self.stride+1),
+                                numpy.uint16((input2D.shape[1]-self.pool_size+1)/self.stride+1),
+                                input2D.shape[-1]))
+        for map_num in range(input2D.shape[-1]):
+            r2 = 0
+            for r in numpy.arange(0,input2D.shape[0]-self.pool_size+1, self.stride):
+                c2 = 0
+                for c in numpy.arange(0, input2D.shape[1]-self.pool_size+1, self.stride):
+                    pool_out[r2, c2, map_num] = numpy.max([input2D[r:r+self.pool_size,  c:c+self.pool_size, map_num]])
+                    c2 = c2 + 1
+                r2 = r2 +1
+
+        self.layer_output = pool_out
+
+class ReLU:
+
+    """
+    Implementing the ReLU layer.
+    """
+
+    def __init__(self, previous_layer):
+
+        """
+        previous_layer: Reference to the previous layer.
+        """
+
+        if previous_layer is None:
+            raise TypeError("The previous layer cannot be of Type 'None'. Please pass a valid layer to the 'previous_layer' parameter.")
+
+        # A reference to the layer that preceeds the current layer in the network architecture.
+        self.previous_layer = previous_layer
+
+        # Size of the input to the layer.
+        self.layer_input_size = self.previous_layer.layer_output_size
+
+        # Size of the output from the layer.
+        self.layer_output_size = self.previous_layer.layer_output_size
+
+        # The layer_output attribute holds the latest output from the layer.
+        self.layer_output = None
+
+    def relu_layer(self, layer_input):
+
+        """
+        Applies the ReLU function over all elements in input to the ReLU layer.
+        
+        layer_input: The input to which the ReLU function is applied.
+
+        The relu_layer() method saves its result in the layer_output attribute.
+        """
+
+        self.layer_output_size = layer_input.size
+        self.layer_output = relu(layer_input)
+
+class Sigmoid:
+
+    """
+    Implementing the sigmoid layer.
+    """
+
+    def __init__(self, previous_layer):
+
+        """
+        previous_layer: Reference to the previous layer.
+        """
+
+        if previous_layer is None:
+            raise TypeError("The previous layer cannot be of Type 'None'. Please pass a valid layer to the 'previous_layer' parameter.")
+        # A reference to the layer that preceeds the current layer in the network architecture.
+        self.previous_layer = previous_layer
+
+        # Size of the input to the layer.
+        self.layer_input_size = self.previous_layer.layer_output_size
+
+        # Size of the output from the layer.
+        self.layer_output_size = self.previous_layer.layer_output_size
+
+        # The layer_output attribute holds the latest output from the layer.
+        self.layer_output = None
+
+    def sigmoid_layer(self, layer_input):
+
+        """
+        Applies the sigmoid function over all elements in input to the sigmoid layer.
+        
+        layer_input: The input to which the sigmoid function is applied.
+
+        The sigmoid_layer() method saves its result in the layer_output attribute.
+        """
+
+        self.layer_output_size = layer_input.size
+        self.layer_output = sigmoid(layer_input)
+
 class Flatten:
 
     """
@@ -536,46 +614,8 @@ class Flatten:
         self.layer_output_size = input2D.size
         self.layer_output = numpy.ravel(input2D)
 
-class ReLU:
-
-    """
-    Implementing the ReLU layer.
-    """
-
-    def __init__(self, previous_layer):
-
-        """
-        previous_layer: Reference to the previous layer.
-        """
-
-        if previous_layer is None:
-            raise TypeError("The previous layer cannot be of Type 'None'. Please pass a valid layer to the 'previous_layer' parameter.")
-        # A reference to the layer that preceeds the current layer in the network architecture.
-        self.previous_layer = previous_layer
-
-        # Size of the input to the layer.
-        self.layer_input_size = self.previous_layer.layer_output_size
-
-        # Size of the output from the layer.
-        self.layer_output_size = self.previous_layer.layer_output_size
-
-        # The layer_output attribute holds the latest output from the layer.
-        self.layer_output = None
-
-    def relu_layer(self, layer_input):
-
-        """
-        Applies the ReLU function over all elements in input to the ReLU layer.
-        
-        layer_input: The input to which the ReLU function is applied.
-
-        The relu_layer() method saves its result in the layer_output attribute.
-        """
-
-        self.layer_output_size = layer_input.size
-        self.layer_output = relu(layer_input)
-
 class Dense:
+
     """
     Implementing the input dense (fully connected) layer of a CNN.
     """
@@ -590,6 +630,7 @@ class Dense:
 
         if num_neurons <= 0:
             raise ValueError("Number of neurons cannot be <= 0. Please pass a valid value to the 'num_neurons' parameter.")
+
         # Number of neurons in the dense layer.
         self.num_neurons = num_neurons
 
@@ -660,7 +701,7 @@ class Model:
         epochs=10: Number of epochs.
         learning_rate=0.01: Learning rate.
         """
-        
+
         self.last_layer = last_layer
         self.epochs = epochs
         self.learning_rate = learning_rate
@@ -669,21 +710,21 @@ class Model:
         self.network_layers = self.get_layers()
 
     def get_layers(self):
-        
+
         """
         Prepares a  list of all layers in the CNN model.
         Returns the list.
         """
-        
+
         network_layers = []
-        
+
         # The last layer in the network archietcture.
         layer = self.last_layer
 
         while "previous_layer" in layer.__init__.__code__.co_varnames:
             network_layers.insert(0, layer)
             layer = layer.previous_layer
-        
+
         return network_layers
 
     def train(self, train_inputs, train_outputs):
@@ -748,6 +789,8 @@ class Model:
                 layer.average_pooling(input2D=last_layer_outputs)
             elif type(layer) is ReLU:
                 layer.relu_layer(layer_input=last_layer_outputs)
+            elif type(layer) is Sigmoid:
+                layer.sigmoid_layer(layer_input=last_layer_outputs)
             elif type(layer) is Flatten:
                 layer.flatten(input2D=last_layer_outputs)
             elif type(layer) is Input2D:
@@ -795,11 +838,11 @@ class Model:
         return predictions
 
     def summary(self):
-        
+
         """
         Prints a summary of the CNN architecture.
         """
-        
+
         print("\n----------Network Architecture----------")
         for layer in self.network_layers:
             print(type(layer))
