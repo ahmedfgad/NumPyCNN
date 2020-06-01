@@ -100,63 +100,63 @@ A network of the following architecture is built.
 Here is the code for building such a network. Remember to set the `num_classes` variable according to the number of classes in the dataset.
 
 ```python
-import cnn
+import pygad.cnn
 
 sample_shape = train_inputs.shape[1:]
 num_classes = 4
 
-input_layer = cnn.Input2D(input_shape=sample_shape)
-conv_layer1 = cnn.Conv2D(num_filters=2,
-                         kernel_size=3,
-                         previous_layer=input_layer,
-                         activation_function=None)
-relu_layer1 = cnn.ReLU(previous_layer=conv_layer1)
-average_pooling_layer = cnn.AveragePooling2D(pool_size=2, 
-                                             previous_layer=relu_layer1,
-                                             stride=2)
+input_layer = pygad.cnn.Input2D(input_shape=sample_shape)
+conv_layer1 = pygad.cnn.Conv2D(num_filters=2,
+                               kernel_size=3,
+                               previous_layer=input_layer,
+                               activation_function=None)
+relu_layer1 = pygad.cnn.ReLU(previous_layer=conv_layer1)
+average_pooling_layer = pygad.cnn.AveragePooling2D(pool_size=2, 
+                                                   previous_layer=relu_layer1,
+                                                   stride=2)
 
-conv_layer2 = cnn.Conv2D(num_filters=3,
-                         kernel_size=3,
-                         previous_layer=average_pooling_layer,
-                         activation_function=None)
-relu_layer2 = cnn.ReLU(previous_layer=conv_layer2)
-max_pooling_layer = cnn.MaxPooling2D(pool_size=2, 
-                                     previous_layer=relu_layer2,
-                                     stride=2)
+conv_layer2 = pygad.cnn.Conv2D(num_filters=3,
+                               kernel_size=3,
+                               previous_layer=average_pooling_layer,
+                               activation_function=None)
+relu_layer2 = pygad.cnn.ReLU(previous_layer=conv_layer2)
+max_pooling_layer = pygad.cnn.MaxPooling2D(pool_size=2, 
+                                           previous_layer=relu_layer2,
+                                           stride=2)
 
-conv_layer3 = cnn.Conv2D(num_filters=1,
-                         kernel_size=3,
-                         previous_layer=max_pooling_layer,
-                         activation_function=None)
-relu_layer3 = cnn.ReLU(previous_layer=conv_layer3)
-pooling_layer = cnn.AveragePooling2D(pool_size=2, 
-                                     previous_layer=relu_layer3,
-                                     stride=2)
+conv_layer3 = pygad.cnn.Conv2D(num_filters=1,
+                               kernel_size=3,
+                               previous_layer=max_pooling_layer,
+                               activation_function=None)
+relu_layer3 = pygad.cnn.ReLU(previous_layer=conv_layer3)
+pooling_layer = pygad.cnn.AveragePooling2D(pool_size=2, 
+                                           previous_layer=relu_layer3,
+                                           stride=2)
 
-flatten_layer = cnn.Flatten(previous_layer=pooling_layer)
-dense_layer1 = cnn.Dense(num_neurons=100, 
-                         previous_layer=flatten_layer,
-                         activation_function="relu")
-dense_layer2 = cnn.Dense(num_neurons=num_classes, 
-                         previous_layer=dense_layer1,
-                         activation_function="softmax")
+flatten_layer = pygad.cnn.Flatten(previous_layer=pooling_layer)
+dense_layer1 = pygad.cnn.Dense(num_neurons=100, 
+                               previous_layer=flatten_layer,
+                               activation_function="relu")
+dense_layer2 = pygad.cnn.Dense(num_neurons=num_classes, 
+                               previous_layer=dense_layer1,
+                               activation_function="softmax")
 ```
 
 After stacking the network layers, a model is created.
 
 ## Creating a Model
 
-A model can be created as an instance of the `cnn.Model` class. Its constructor accepts the last layer in the network architecture in addition to some optional parameters.
+A model can be created as an instance of the `pygad.cnn.Model` class. Its constructor accepts the last layer in the network architecture in addition to some optional parameters.
 
 ```python
-model = cnn.Model(last_layer=dense_layer2,
-                  epochs=1,
-                  learning_rate=0.01)
+model = pygad.cnn.Model(last_layer=dense_layer2,
+                        epochs=1,
+                        learning_rate=0.01)
 ```
 
 ## Network Architecture Summary
 
-The `summary()` method in the `cnn.Model` class prints a summary of the network architecture.
+The `summary()` method in the `pygad.cnn.Model` class prints a summary of the network architecture.
 
 ```python
 model.summary(last_layer=dense_layer2)
@@ -182,7 +182,7 @@ model.summary(last_layer=dense_layer2)
 
 ## Training the Network
 
-The `train()` method in the `cnn.Model` class trains the network. It accepts the training data inputs and outputs.
+The `train()` method in the `pygad.cnn.Model` class trains the network. It accepts the training data inputs and outputs.
 
 ```python
 model.train(train_inputs=train_inputs, 
@@ -191,7 +191,7 @@ model.train(train_inputs=train_inputs,
 
 ## Making Predictions
 
-After the network is trained, the `predict()` method in the `cnn.Model` class can be used for making predictions.
+After the network is trained, the `predict()` method in the `pygad.cnn.Model` class can be used for making predictions.
 
 ```python
 predictions = model.predict(data_inputs=train_inputs)
