@@ -15,7 +15,7 @@ The project will be extended to **train CNN using the genetic algorithm** with t
 
 To install [PyGAD](https://pypi.org/project/pygad), simply use pip to download and install the library from [PyPI](https://pypi.org/project/pygad) (Python Package Index). The library lives a PyPI at this page https://pypi.org/project/pygad.
 
-For Windows, issue the following command:
+For Windows, issue use the following command:
 
 ```python
 pip install pygad
