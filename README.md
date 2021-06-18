@@ -24,12 +24,6 @@ To install [PyGAD](https://pypi.org/project/pygad), simply use pip to download a
 For Windows, issue the following command:
 
 ```python
-pip install pygad
-```
-
-For Linux and Mac, replace `pip` by use `pip3` because the library only supports Python 3.
-
-```python
 pip3 install pygad
 ```
 
